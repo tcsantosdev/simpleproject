@@ -1,13 +1,21 @@
-FROM maven:3.6.1-jdk-8-alpine
+FROM maven:3.6.1-jdk-8-alpine as build
 
-RUN mkdir app
+RUN mkdir source
 
-COPY ./ app/
+COPY ./ source/
 
-WORKDIR /app
+WORKDIR /source
 
 RUN mvn clean install -U
 
+FROM openjdk:8-alpine
+
+RUN mkdir app
+
+WORKDIR /app
+
+COPY --from=build /source/target/*.jar /app/.
+
 ENV SPRING_PROFILES_ACTIVE=postgres
 
-ENTRYPOINT ["java", "-jar", "target/simpleproject-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "simpleproject-0.0.1-SNAPSHOT.jar"]
