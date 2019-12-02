@@ -20,5 +20,4 @@ services:
 
 networks: 
      simple-project-network:
-        external: true
 
